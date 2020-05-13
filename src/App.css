@@ -31,14 +31,26 @@ div > .sidebar {
   flex-shrink: 0;
   background-color: #ff6347;
   align-items: center;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 15px;
 }
 
+div > .sidebar__button {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .content,
 .content__dashboard {
   flex-grow: 1;
   height: 100%;
 
   background-color: white;
+}
+.content__table {
+  height: calc(100% - 150px);
 }
 
 .cards-section {
@@ -59,6 +71,13 @@ div > .sidebar {
   margin: 10px;
 }
 
-.content__table {
-  height: calc(100% - 150px);
+/* Dynamic change color every 2 rows */
+.main-table-body > tr:nth-child(4n + 1),
+tr:nth-child(4n + 2) td {
+  background-color: white;
+}
+
+.main-table-body > tr:nth-child(4n + 3),
+tr:nth-child(4n + 4) td {
+  background-color: #f5f5f5;
 }

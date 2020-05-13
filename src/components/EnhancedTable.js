@@ -16,6 +16,12 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
+import Tooltip from "@material-ui/core/Tooltip";
+import EmailIcon from "@material-ui/icons/Email";
+import PermIdentityIcon from "@material-ui/icons/PermIdentity";
+import InfoIcon from "@material-ui/icons/Info";
+import Dialog from "@material-ui/core/Dialog";
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -215,9 +221,19 @@ function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
-
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
   return (
-    <React.Fragment style={{ height: "10px" }}>
+    <React.Fragment>
+      <Dialog
+        fullScreen
+        open={openDialog}
+        onClose={handleClose}
+        // TransitionComponent={Transition}
+        unmountOnExit
+      ></Dialog>
       <TableRow style={{ height: "10px" }}>
         <TableCell style={{ height: "10px" }}>
           <IconButton
@@ -251,7 +267,11 @@ function Row(props) {
           {row.carbs}
         </TableCell>
         <TableCell style={{ height: "10px" }} align="right">
-          {row.protein}
+          <IconButton>
+            <Tooltip title="Ver informacion del cliente">
+              <PermIdentityIcon></PermIdentityIcon>
+            </Tooltip>
+          </IconButton>
         </TableCell>
       </TableRow>
       <TableRow style={{ paddingBottom: 0, paddingTop: 0, height: "0px" }}>
@@ -287,7 +307,27 @@ function Row(props) {
                       <TableCell align="right">
                         {historyRow.fechaAsignacion}
                       </TableCell>
-                      <TableCell align="right">{historyRow.opciones}</TableCell>
+                      <TableCell align="right">
+                        <IconButton>
+                          <Tooltip title="Agregar Gestion">
+                            <AddIcon></AddIcon>
+                          </Tooltip>
+                        </IconButton>
+                        <IconButton>
+                          <Tooltip title="Crear nota de cobro">
+                            <EmailIcon></EmailIcon>
+                          </Tooltip>
+                        </IconButton>
+                        <IconButton>
+                          <Tooltip title="Ver informacion de la cuenta">
+                            <InfoIcon
+                              onClick={() => {
+                                setOpenDialog(true);
+                              }}
+                            ></InfoIcon>
+                          </Tooltip>
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -379,53 +419,61 @@ export default function EnhancedTable() {
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
-        <TableContainer style={{ width: "100%", height: "calc(100% - 50px)" }}>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-            aria-label="enhanced table"
+    <React.Fragment>
+      <div className={classes.root}>
+        <Paper className={classes.paper}>
+          {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
+          <TableContainer
+            style={{ width: "100%", height: "calc(100% - 50px)" }}
           >
-            <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  return (
-                    <Row style={{ height: "50px" }} key={row.name} row={row} />
-                  );
-                })}
-              <TableRow></TableRow>
-              {emptyRows > 0 && (
-                <TableRow style={{ height: "0px" }}>
-                  <TableCell colSpan={6} style={{ padding: "0px" }} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          style={{ height: "50px", width: "100%", overflow: "hidden" }}
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
+            <Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody className="main-table-body">
+                {stableSort(rows, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    return (
+                      <Row
+                        style={{ height: "50px" }}
+                        key={row.name}
+                        row={row}
+                      />
+                    );
+                  })}
+                <TableRow></TableRow>
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: "0px" }}>
+                    <TableCell colSpan={6} style={{ padding: "0px" }} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            style={{ height: "50px", width: "100%", overflow: "hidden" }}
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
+    </React.Fragment>
   );
 }
